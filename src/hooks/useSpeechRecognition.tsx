@@ -3,6 +3,39 @@ import { useState, useEffect, useCallback } from 'react';
 import { SpeechRecognitionResult } from '@/types';
 import { toast } from '@/components/ui/use-toast';
 
+// Add type definitions for the Web Speech API
+interface SpeechRecognitionEvent extends Event {
+  results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionError extends Event {
+  error: string;
+  message: string;
+}
+
+interface WebkitSpeechRecognition {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start: () => void;
+  stop: () => void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: SpeechRecognitionError) => void;
+  onend: () => void;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition: new () => WebkitSpeechRecognition;
+    webkitSpeechRecognition: new () => WebkitSpeechRecognition;
+  }
+}
+
 interface SpeechRecognitionHook {
   isListening: boolean;
   startListening: () => void;
